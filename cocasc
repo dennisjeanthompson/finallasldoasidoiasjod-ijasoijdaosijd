@@ -1,0 +1,199 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
+import java.util.stream.IntStream;
+
+
+public class Puno {
+
+    public static class Node {
+        int data;
+        Node left;
+        Node right;
+
+        public Node(int data) {
+            this.data = data;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    public Node root;
+
+    public Puno() {
+        root = null;
+    }
+
+    public void insert(int data) {
+        Node newNode = new Node(data);
+
+        if (root == null) {
+            root = newNode;
+            return;
+        } else {
+            Node current = root, parent = null;
+
+            while (true) {
+                parent = current;
+
+                if (data < current.data) {
+                    current = current.left;
+                    if (current == null) {
+                        parent.left = newNode;
+                        return;
+                    }
+                } else {
+                    current = current.right;
+                    if (current == null) {
+                        parent.right = newNode;
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public Node minNode(Node root) {
+        if (root.left != null)
+            return minNode(root.left);
+        else
+            return root;
+    }
+
+    public Node deleteNode(Node node, int value) {
+        if (node == null) {
+            return null;
+        } else {
+            if (value < node.data)
+                node.left = deleteNode(node.left, value);
+            else if (value > node.data)
+                node.right = deleteNode(node.right, value);
+            else {
+                if (node.left == null && node.right == null)
+                    node = null;
+                else if (node.left == null) {
+                    node = node.right;
+                } else if (node.right == null) {
+                    node = node.left;
+                } else {
+                    Node temp = minNode(node.right);
+                    node.data = temp.data;
+                    node.right = deleteNode(node.right, temp.data);
+                }
+            }
+            return node;
+        }
+    }
+
+    public void inorderTraversal(Node node) {
+        if (root == null) {
+            System.out.println("Tree is empty");
+            return;
+        } else {
+            if (node.left != null)
+                inorderTraversal(node.left);
+            System.out.print(node.data + " ");
+            if (node.right != null)
+                inorderTraversal(node.right);
+        }
+    }
+
+    public int[] toArray(Node node) {
+        List<Integer> list = new ArrayList<>();
+        toArrayHelper(node, list);
+        return list.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    private void toArrayHelper(Node node, List<Integer> list) {
+        if (node != null) {
+            toArrayHelper(node.left, list);
+            list.add(node.data);
+            toArrayHelper(node.right, list);
+        }
+    }
+
+    public void printPreorder(Node node) {
+        if (node != null) {
+            System.out.print(node.data + " ");
+            printPreorder(node.left);
+            printPreorder(node.right);
+        }
+    }
+
+    public void printPostorder(Node node) {
+        if (node != null) {
+            printPostorder(node.left);
+            printPostorder(node.right);
+            System.out.print(node.data + " ");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        while (true) {
+            try {
+                Puno bt = new Puno(); // Create a new tree for each iteration
+                System.out.println("==============================");
+                System.out.println("Type [1] to Insert");
+                System.out.println("Type [2] to End");
+                System.out.print("Choice:\t");
+                int choice = scan.nextInt();
+                if (choice == 1) {
+                    while (true) {
+                        System.out.print("Enter a number to insert (or type -1 to stop inserting):\t");
+                        int num = scan.nextInt();
+                        if (num == -1) {
+                            break;
+                        }
+                        bt.insert(num);
+                    }
+                } else if (choice == 2) {
+                    break; // Exit the loop if the user chooses to end
+                } else {
+                    System.out.println("Invalid choice, please try again.");
+                }
+
+                System.out.println("\n==============================");
+                // Display 1-D array representation with index
+                int[] arrayRepresentation = bt.toArray(bt.root);
+                System.out.print("1-D Array Representation: ");
+                for (int i = 0; i < arrayRepresentation.length; i++) {
+                    System.out.print(arrayRepresentation[i] + "  ");
+                }
+                
+                System.out.println("\n\t\t\t\t  Index: " + Arrays.toString(IntStream.range(0, arrayRepresentation.length).toArray()));
+ System.out.println("\n==============================");
+              
+System.out.println("Inorder traversal:");
+                System.out.print("[");
+                bt.inorderTraversal(bt.root);
+                System.out.println("]");
+                // Display Preorder traversal
+                System.out.println("Preorder traversal:");
+                System.out.print("[");
+                bt.printPreorder(bt.root);
+                System.out.println("]");
+
+                // Display Postorder traversal
+                System.out.println("Postorder traversal:");
+                System.out.print("[");
+                bt.printPostorder(bt.root);
+                System.out.println("]");
+
+                // Option to try again
+                System.out.print("Do you want to try again? (Type 'yes' to try again, any other input to end):\t");
+                String tryAgain = scan.next();
+                if (!tryAgain.equalsIgnoreCase("yes")) {
+                    break; // Exit the loop if the user does not want to try again
+                }
+
+            } catch (Exception e) {
+                System.out.println("Invalid input");
+                scan.next();
+            }
+        }
+        System.out.println("Program ended.");
+    }
+}
