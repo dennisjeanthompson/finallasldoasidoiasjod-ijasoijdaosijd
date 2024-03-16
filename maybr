@@ -1,0 +1,211 @@
+import java.util.*;
+import java.util.stream.IntStream;
+
+public class Puno {
+    public static class Node {
+        int data;
+        Node left;
+        Node right;
+
+        public Node(int data) {
+            this.data = data;
+            this.left = null;
+            this.right = null;
+        }
+    }
+
+    public Node root;
+    private Set<Integer> uniqueElements = new HashSet<>();
+
+    public Puno() {
+        root = null;
+    }
+
+    public void insertUnique(int data) {
+        if (uniqueElements.contains(data)) {
+            System.out.println("Duplicate value: " + data);
+            return;
+        }
+        uniqueElements.add(data);
+        if (root == null) {
+            root = new Node(data);
+            return;
+        } else {
+            Node current = root, parent = null;
+
+            while (true) {
+                parent = current;
+
+                if (data < current.data) {
+                    current = current.left;
+                    if (current == null) {
+                        parent.left = new Node(data);
+                        return;
+                    }
+                } else {
+                    current = current.right;
+                    if (current == null) {
+                        parent.right = new Node(data);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    public Node minNode(Node root) {
+        if (root.left != null)
+            return minNode(root.left);
+        else
+            return root;
+    }
+
+    public Node deleteNode(Node node, int value) {
+        if (node == null) {
+            return null;
+        } else {
+            if (value < node.data)
+                node.left = deleteNode(node.left, value);
+            else if (value > node.data)
+                node.right = deleteNode(node.right, value);
+            else {
+                if (node.left == null && node.right == null)
+                    node = null;
+                else if (node.left == null) {
+                    node = node.right;
+                } else if (node.right == null) {
+                    node = node.left;
+                } else {
+                    Node temp = minNode(node.right);
+                    node.data = temp.data;
+                    node.right = deleteNode(node.right, temp.data);
+                }
+            }
+            return node;
+        }
+    }
+
+    public void inorderTraversalUnique(Node node) {
+        if (node != null) {
+            if (node.left != null)
+                inorderTraversalUnique(node.left);
+            if (uniqueElements.contains(node.data)) {
+                System.out.print(node.data + " ");
+            }
+            if (node.right != null)
+                inorderTraversalUnique(node.right);
+        }
+    }
+
+    public void printPreorderUnique(Node node) {
+        if (node != null) {
+            if (uniqueElements.contains(node.data)) {
+                System.out.print(node.data + " ");
+            }
+            printPreorderUnique(node.left);
+            printPreorderUnique(node.right);
+        }
+    }
+
+    public void printPostorderUnique(Node node) {
+        if (node != null) {
+            printPostorderUnique(node.left);
+            printPostorderUnique(node.right);
+            if (uniqueElements.contains(node.data)) {
+                System.out.print(node.data + " ");
+            }
+        }
+    }
+
+    public int[] toArray(Node node) {
+        List<Integer> list = new ArrayList<>();
+        toArrayHelper(node, list);
+        return list.stream().mapToInt(Integer::intValue).toArray();
+    }
+
+    private void toArrayHelper(Node node, List<Integer> list) {
+        if (node != null) {
+            toArrayHelper(node.left, list);
+            if (uniqueElements.contains(node.data)) {
+                list.add(node.data);
+            }
+            toArrayHelper(node.right, list);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scan = new Scanner(System.in);
+
+        while (true) {
+            try {
+                Puno bt = new Puno(); // Create a new tree for each iteration
+                System.out.println("==============================");
+                System.out.println("Type [1] to Insert");
+                System.out.println("Type [2] to Delete");
+                System.out.println("Type [3] to End");
+                System.out.print("Choice:\t");
+                int choice = scan.nextInt();
+                if (choice == 1) {
+                    while (true) {
+                        System.out.print("Enter a number to insert (or type -1 to stop inserting):\t");
+                        int num = scan.nextInt();
+                        if (num == -1) {
+                            break;
+                        }
+                        bt.insertUnique(num);
+                    }
+                } else if (choice == 2) {
+                    System.out.print("Enter the number to delete: ");
+                    int numToDelete = scan.nextInt();
+                    bt.root = bt.deleteNode(bt.root, numToDelete);
+                } else if (choice == 3) {
+                    break; // Exit the loop if the user chooses to end
+                } else {
+                    System.out.println("Invalid choice, please try again.");
+                }
+
+                System.out.println("\n==============================");
+                // Display 1-D array representation with index
+                int[] arrayRepresentation = bt.toArray(bt.root);
+                System.out.print("1-D Array Representation: ");
+                for (int i = 0; i < arrayRepresentation.length; i++) {
+                    if (bt.uniqueElements.contains(arrayRepresentation[i])) {
+                        System.out.print(arrayRepresentation[i] + "  ");
+                    }
+                }
+                System.out.println();
+                System.out.println("\t\t\t\t  Index: " + Arrays.toString(IntStream.range(0, arrayRepresentation.length).toArray()));
+                System.out.println("\n==============================");
+
+                System.out.println("Inorder traversal:");
+                System.out.print("[");
+                bt.inorderTraversalUnique(bt.root);
+                System.out.println("]");
+                // Display Preorder traversal
+                System.out.println("Preorder traversal:");
+                System.out.print("[");
+                bt.printPreorderUnique(bt.root);
+                System.out.println("]");
+
+                // Display Postorder traversal
+                System.out.println("Postorder traversal:");
+                System.out.print("[");
+                bt.printPostorderUnique(bt.root);
+                System.out.println("]");
+
+                // Option to try again
+                System.out.print("Do you want to try again? (Type 'yes' to try again, any other input to end):\t");
+                String tryAgain = scan.next();
+                if (!tryAgain.equalsIgnoreCase("yes")) {
+                    break; // Exit the loop if the user does not want to try again
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input");
+                scan.nextLine(); // Consume the newline character
+            }
+        }
+        System.out.println("Program ended.");
+        scan.close(); // Close the scanner
+    }
+}
