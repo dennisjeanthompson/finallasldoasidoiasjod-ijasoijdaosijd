@@ -1,0 +1,163 @@
+// Online C# Editor for free
+// Write, Edit and Run your C# code using C# Online Compiler
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+
+public class HelloWorld
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine ("Try programiz.pro");
+    ///we have three classes 
+    //customer  parameter of  name and int phone number
+    //method is "RentACar()"" which has  a parameter of "vehicle"
+    //method is "ReturnCar()"" which has a parameter of "vehicle"
+    Customer cock = new Customer("KILLer of babies",999);
+    Customer gay = new Customer("Child Molester",888);
+    
+    //2nd class is vehicle which has 
+    // a method of "DisplayDetails()" with brackets mf
+    // in which basically displays all the details of that vehicle
+    //A method of "Rent()" which sets the bool IsAvailable to false - you like get it 
+    //A method of "Return" which sets the bool IsAvailabel to true -  return
+    
+    
+    
+    //gay.RentACar(v);
+    
+    
+    
+    
+     }
+    
+    
+}
+
+public class Customer
+{
+    public string Name{get;set;}
+    public int Phone{get;set;}
+    public string IDnumber{get;set;}
+    private static int s_IDnumber = 123;
+    
+    public Customer(string name,int phone)
+    {
+        IDnumber = s_IDnumber++.ToString();
+        Phone = phone;
+        Name = name;
+        
+    }
+    public void RentACar(Vehicle vehicle)
+    {
+          vehicle.Rent();
+            Console.WriteLine("CAR RENTED" + vehicle.DisplayDetails());
+    }
+    public void ReturnCar(Vehicle vehicle)
+    {
+        vehicle.Return();
+            Console.WriteLine("CAR returned" + vehicle.DisplayDetails());
+    }
+    
+}
+public class Vehicle
+{
+    public string Make{get;set;}
+    public string Model{get;set;}
+    public int Year{get;set;}
+    public bool IsAvailable {get;set;}
+    public double RentalPricePerDay{get;set;}
+    public Vehicle(string make,string model,int year,bool isAvailable,double rentalPricePerDay)
+    {
+        Make = make;
+        Model = model;
+        Year = year;
+        RentalPricePerDay = rentalPricePerDay;
+        IsAvailable = isAvailable;
+    }
+    
+     public virtual string DisplayDetails()
+    {
+        return $"Name: {Make} Model: {Model} Year: {Year} PricePerDay: {RentalPricePerDay}";
+    }
+     public void Rent()
+    {
+        IsAvailable =false;
+    }
+    public void Return()
+    {
+        IsAvailable = true;
+    }
+    
+    
+    
+}
+public class Car:Vehicle
+{
+    public Car(string name,string model,int year,bool isAvailable,double rentalPricePerDay):base( name, model, year,isAvailable,rentalPricePerDay)
+    {
+        
+    }
+    
+   
+     public override string DisplayDetails()
+            {
+                return base.DisplayDetails();
+
+
+            }
+
+    
+}
+public class RentalSystem
+{
+    List<Vehicle> availableCars = new  List <Vehicle>();
+    List<Vehicle> rentedCars = new List<Vehicle>();
+    
+   
+    public void AddCar(Vehicle vehicle)
+    {
+        availableCars.Add(vehicle);
+    }
+    public void RentCar(Vehicle vehicle,Customer customer)
+    {
+       if (vehicle.IsAvailable)
+
+       {
+        customer.RentACar(vehicle);
+          // availableCars.Rent();
+            // availableCars.Add(vehicle);
+               availableCars.Remove(vehicle);
+            rentedCars.Add(vehicle);
+          
+       }
+       else
+       {
+           Console.WriteLine("No available CARS");
+       }
+    }
+    public void DisplayAvailableCars()
+    
+    {
+        //for each loop here concaninate a list of string
+        foreach(Vehicle vehicle in availableCars)
+        {
+            Console.WriteLine($"{vehicle.DisplayDetails()}");
+        }
+        
+        
+    }
+    public void DisplayRetedCars()
+    {
+        foreach(Vehicle vehicle in availableCars)
+        {
+             Console.WriteLine($"{vehicle.DisplayDetails()}");
+            
+        }
+       
+    }
+   
+   
+}
